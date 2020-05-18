@@ -1,0 +1,24 @@
+classdef Transmitter
+   
+    properties
+        inputBuffer; %buffer used to carry out modulation (receives bits)
+        mod_depth; % Modulation depth
+        modulator; % Pointer to modulation function
+    end
+    
+    
+    methods
+        
+        % Constructor function
+        function obj = Transmitter(modulator, mod_depth, frame_size)
+            % This constructor receives a pointer to the function used for
+            % modulating data. Typically qammod. mod_depth and frame_size
+            % are used to calcula
+            
+            
+            
+        end
+        
+    end
+    
+end

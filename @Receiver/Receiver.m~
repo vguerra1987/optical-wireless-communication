@@ -1,0 +1,51 @@
+classdef Receiver
+   
+    properties
+        %buffer used to carry out demodulation (received symbols plus CP, 
+        % headers, CRC, whatever...)
+        inputBuffer; 
+        mod_depth; % Modulation depth
+        demodulator; % Pointer to demodulation function (QAM, QPSK, 32-QAM, etc...)
+        frame_decomposer;
+    end
+    
+    
+    methods
+        
+        % Constructor function
+        function obj = Receiver(demodulator, mod_depth, ...
+                                   frame_size, frame_decomposer)
+            % This constructor receives a pointer to the function used for
+            % demodulating data. Typically qammod. frame_size
+            % are used to calculate the input buffer size, in symbols.  
+            % frame_decomposer is a pointer to the function used to 
+            % decompose the frame.
+            obj.inputBuffer = zeros(frame_size, 1);
+            obj.mod_depth = mod_depth;
+            obj.demodulator = demodulator;
+            obj.frame_decomposer = frame_decomposer;
+        end
+        
+%         % Function to get data from a buffer
+%         function obj = pullData(obj, channel)
+%             % We asume that data is properly ordered inside channel
+%             obj.inputBuffer = channel(1:length(obj.inputBuffer));
+%         end
+        
+        % Frame composition and modulation
+        function data = receive(obj, signal)
+            % First of all, we decompose the received frame. The
+            % frame_decomposer function must extract CP
+            mapped = obj.modulator(obj.inputBuffer, obj.mod_depth);
+            
+            % Now we compose the frame. This function must take into
+            % account Hermittian Symmetry.
+            signal = obj.frame_composer(mapped);
+            
+            % Finally, clipping since we are using optical sources.
+            signal(signal < 0) = 0;
+        end
+        
+    end
+    
+end
